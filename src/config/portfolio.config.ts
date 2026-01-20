@@ -18,7 +18,7 @@ export const portfolioConfig = {
     // These roles will rotate in the hero typewriter effect
     roles: [
       "Full Stack Developer",
-      "Cloud Architect", 
+      "Cloud Architect",
       "AI Automation Specialist",
       "Healthcare Tech Expert"
     ],

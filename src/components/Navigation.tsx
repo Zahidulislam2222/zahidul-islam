@@ -55,7 +55,7 @@ export const Navigation = () => {
           scaleX:
             typeof window !== "undefined"
               ? window.scrollY /
-                (document.documentElement.scrollHeight - window.innerHeight)
+              (document.documentElement.scrollHeight - window.innerHeight)
               : 0,
         }}
       />
@@ -63,11 +63,10 @@ export const Navigation = () => {
       <motion.nav
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
-          isScrolled
-            ? "bg-background/80 backdrop-blur-xl border-b border-border/50"
-            : "bg-transparent"
-        }`}
+        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${isScrolled
+          ? "bg-background/80 backdrop-blur-xl border-b border-border/50"
+          : "bg-transparent"
+          }`}
       >
         <div className="section-container">
           <div className="flex items-center justify-between h-16 md:h-20">
@@ -96,11 +95,10 @@ export const Navigation = () => {
                     e.preventDefault();
                     scrollToSection(item.href);
                   }}
-                  className={`px-4 py-2 text-sm font-medium transition-colors rounded-lg ${
-                    activeSection === item.href.replace("#", "")
-                      ? "text-primary bg-primary/10"
-                      : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
-                  }`}
+                  className={`px-4 py-2 text-sm font-medium transition-colors rounded-lg ${activeSection === item.href.replace("#", "")
+                    ? "text-primary bg-primary/10"
+                    : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+                    }`}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -111,15 +109,16 @@ export const Navigation = () => {
 
             {/* CTA & Mobile Menu */}
             <div className="flex items-center gap-3">
+              {/* DESKTOP DOWNLOAD BUTTON */}
               <Button
                 variant="outline"
                 size="sm"
                 className="hidden md:flex items-center gap-2 border-primary/50 text-primary hover:bg-primary hover:text-primary-foreground"
                 asChild
               >
-                <a href={portfolioConfig.personal.resumeUrl} download>
+                <a href="/cv-2026.pdf" download="Zahidul_Islam_Resume.pdf">
                   <Download className="w-4 h-4" />
-                  Resume
+                  Download Resume
                 </a>
               </Button>
 
@@ -158,15 +157,16 @@ export const Navigation = () => {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 }}
-                    className={`block px-4 py-3 text-lg font-medium rounded-lg transition-colors ${
-                      activeSection === item.href.replace("#", "")
-                        ? "text-primary bg-primary/10"
-                        : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
-                    }`}
+                    className={`block px-4 py-3 text-lg font-medium rounded-lg transition-colors ${activeSection === item.href.replace("#", "")
+                      ? "text-primary bg-primary/10"
+                      : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+                      }`}
                   >
                     {item.label}
                   </motion.a>
                 ))}
+
+                {/* MOBILE DOWNLOAD BUTTON */}
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -178,7 +178,7 @@ export const Navigation = () => {
                     className="w-full border-primary/50 text-primary hover:bg-primary hover:text-primary-foreground"
                     asChild
                   >
-                    <a href={portfolioConfig.personal.resumeUrl} download>
+                    <a href="/cv-2026.pdf" download="Zahidul_Islam_Resume.pdf">
                       <Download className="w-4 h-4 mr-2" />
                       Download Resume
                     </a>
