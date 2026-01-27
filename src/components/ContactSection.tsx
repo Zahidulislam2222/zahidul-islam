@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import emailjs from "@emailjs/browser";
 
 export const ContactSection = () => {
   const { personal, socials } = portfolioConfig;
@@ -23,23 +24,43 @@ export const ContactSection = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   const { toast } = useToast();
+  const formRef = useRef<HTMLFormElement>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      await emailjs.sendForm(
+        import.meta.env.VITE_SERVICE_ID,
+        import.meta.env.VITE_TEMPLATE_ID,
+        formRef.current!,
+        import.meta.env.VITE_PUBLIC_KEY
+      );
 
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-    toast({
-      title: "Message sent!",
-      description: "Thank you for reaching out. I'll get back to you soon.",
-    });
+      setIsSubmitted(true);
+      toast({
+        title: "Message sent!",
+        description: "Thank you for reaching out. I'll get back to you soon.",
+      });
 
-    // Reset form after delay
-    setTimeout(() => setIsSubmitted(false), 5000);
+      // --- THIS WAS THE PROBLEM LINE ---
+      // Old: e.currentTarget.reset(); 
+      // New: Use the ref instead
+      formRef.current?.reset();
+      // ---------------------------------
+
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Something went wrong. Please try again later.",
+        variant: "destructive",
+      });
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
+      setTimeout(() => setIsSubmitted(false), 5000);
+    }
   };
 
   const contactInfo = [
@@ -179,13 +200,18 @@ export const ContactSection = () => {
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ delay: 0.3 }}
           >
-            <form onSubmit={handleSubmit} className="glass-card p-8 space-y-6">
+            <form
+              ref={formRef}   // <-- ADD THIS
+              onSubmit={handleSubmit}
+              className="glass-card p-8 space-y-6"
+            >
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-foreground">
                     Name
                   </label>
                   <Input
+                    name="user_name"
                     placeholder="Your name"
                     required
                     className="bg-secondary/50 border-border focus:border-primary"
@@ -196,6 +222,7 @@ export const ContactSection = () => {
                     Email
                   </label>
                   <Input
+                    name="user_email"
                     type="email"
                     placeholder="your@email.com"
                     required
@@ -209,6 +236,7 @@ export const ContactSection = () => {
                   Subject
                 </label>
                 <Input
+                  name="subject"
                   placeholder="Project inquiry"
                   required
                   className="bg-secondary/50 border-border focus:border-primary"
@@ -220,6 +248,7 @@ export const ContactSection = () => {
                   Message
                 </label>
                 <Textarea
+                  name="message"
                   placeholder="Tell me about your project..."
                   required
                   rows={5}

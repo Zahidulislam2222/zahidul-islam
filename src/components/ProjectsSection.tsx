@@ -1,15 +1,20 @@
-import { useState, useRef } from "react";
+import { useState, useRef, forwardRef } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import {
   ExternalLink,
   Github,
   Play,
+  Cloud,
   X,
   Heart,
   ChevronDown,
   ChevronUp,
   Star,
   Zap,
+  Database,
+  FileText,
+  Rocket,
+  Blocks,
   ChevronLeft,  // <-- Add this
   ChevronRight, // <-- Add this
   Code,
@@ -65,16 +70,54 @@ const VideoModal = ({
   );
 };
 
-// Project Card Component
-const ProjectCard = ({
-  project,
-  index,
-  onVideoClick,
+// Image Modal Component (ADD THIS)
+const ImageModal = ({
+  imageUrl,
+  isOpen,
+  onClose,
 }: {
+  imageUrl: string | null;
+  isOpen: boolean;
+  onClose: () => void;
+}) => {
+  if (!isOpen || !imageUrl) return null;
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 flex items-center justify-center bg-background/95 backdrop-blur-sm p-4"
+        onClick={onClose}
+      >
+        <motion.img
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.9, opacity: 0 }}
+          src={imageUrl}
+          alt="Full view"
+          className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl"
+          onClick={(e) => e.stopPropagation()}
+        />
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 p-2 text-muted-foreground hover:text-foreground transition-colors bg-background/50 rounded-full"
+        >
+          <X className="w-8 h-8" />
+        </button>
+      </motion.div>
+    </AnimatePresence>
+  );
+};
+
+// Project Card Component
+const ProjectCard = forwardRef<HTMLDivElement, {
   project: Project;
   index: number;
   onVideoClick: (videoId: string) => void;
-}) => {
+  onImageClick: (imgUrl: string) => void;
+}>(({ project, index, onVideoClick, onImageClick }, ref) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
 
@@ -97,6 +140,7 @@ const ProjectCard = ({
 
   return (
     <motion.div
+      ref={ref}
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
@@ -120,8 +164,10 @@ const ProjectCard = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className={`w-full h-full object-cover transition-all duration-500 group-hover:scale-105 ${imageLoaded ? "opacity-100" : "opacity-0"
+            className={`w-full h-full object-cover transition-all duration-500 group-hover:scale-105 cursor-zoom-in ${imageLoaded ? "opacity-100" : "opacity-0"
               }`}
+            onClick={() => onImageClick(projectImages[currentImageIndex])} // <--- ADD THIS
+            // ... keep onLoad and loading props ...
             onLoad={() => setImageLoaded(true)}
             loading="lazy"
           />
@@ -173,6 +219,36 @@ const ProjectCard = ({
               Healthcare
             </Badge>
           )}
+          {project.isHybridCloud && (
+            <Badge className="hybridcloud-badge flex items-center gap-1">
+              <Cloud className="w-3 h-3" />
+              Hybrid Cloud
+            </Badge>
+          )}
+          {project.isHeadless && (
+            <Badge className="headless-badge flex items-center gap-1">
+              <Database className="w-3 h-3" />
+              Headless
+            </Badge>
+          )}
+          {project.isWordpress && (
+            <Badge className="wordpress-badge flex items-center gap-1">
+              <FileText className="w-3 h-3" />
+              Wordpress
+            </Badge>
+          )}
+          {project.isStrapi && (
+            <Badge className="strapi-badge flex items-center gap-1">
+              <Rocket className="w-3 h-3" />
+              Strapi
+            </Badge>
+          )}
+          {project.isContentful && (
+            <Badge className="contentful-badge flex items-center gap-1">
+              <Blocks className="w-3 h-3" />
+              Contentful
+            </Badge>
+          )}
         </div>
 
         {/* Video Play Button */}
@@ -191,7 +267,9 @@ const ProjectCard = ({
         {/* Category & Title */}
         <div className="mb-3">
           <span className="text-xs text-primary font-medium uppercase tracking-wider">
-            {projectCategories.find((c) => c.id === project.category)?.label}
+            {project.category.map((catId) =>
+              projectCategories.find((c) => c.id === catId)?.label
+            ).join(", ")}
           </span>
           <h3 className="text-xl font-bold mt-1">{project.title}</h3>
         </div>
@@ -343,17 +421,17 @@ const ProjectCard = ({
       </div>
     </motion.div>
   );
-};
+});
 
 export const ProjectsSection = () => {
   const [activeCategory, setActiveCategory] = useState("all");
   const [videoModalId, setVideoModalId] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   const filteredProjects = portfolioConfig.projects.filter(
-    (project) => activeCategory === "all" || project.category === activeCategory
-  );
+    (project) => activeCategory === "all" || project.category.includes(activeCategory));
 
   return (
     <section
@@ -414,6 +492,7 @@ export const ProjectsSection = () => {
                   project={project}
                   index={index}
                   onVideoClick={setVideoModalId}
+                  onImageClick={setSelectedImage}
                 />
               ))}
             </AnimatePresence>
@@ -426,6 +505,12 @@ export const ProjectsSection = () => {
         videoId={videoModalId || ""}
         isOpen={!!videoModalId}
         onClose={() => setVideoModalId(null)}
+      />
+      {/* ADD THIS SECTION BELOW */}
+      <ImageModal
+        imageUrl={selectedImage}
+        isOpen={!!selectedImage}
+        onClose={() => setSelectedImage(null)}
       />
     </section>
   );
