@@ -9,6 +9,7 @@ import {
   Linkedin,
   Twitter,
   CheckCircle,
+  MessageCircle,
 } from "lucide-react";
 import { portfolioConfig } from "@/config/portfolio.config";
 import { Button } from "@/components/ui/button";
@@ -76,6 +77,14 @@ export const ContactSection = () => {
       value: personal.phone,
       href: `tel:${personal.phone}`,
     },
+    {
+      icon: MessageCircle,
+      label: "WhatsApp",
+      // @ts-ignore
+      value: personal.whatsapp,
+      // @ts-ignore
+      href: `https://wa.me/${personal.whatsapp.replace("+", "")}`,
+    }, ,
     {
       icon: MapPin,
       label: "Location",

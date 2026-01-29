@@ -26,7 +26,8 @@ export const portfolioConfig = {
     shortBio: "Building the future of healthcare technology with hybrid cloud solutions and AI automation.",
     location: "Dhaka, Bangladesh",
     email: "muhammadzahidulislam2222@gmail.com", // Replace with your email
-    phone: "+880 1794739339", // Replace with your phone
+    phone: "+8801794739339", // Replace with your phone
+    whatsapp: "+8801794739339", // WhatsApp Number
     availability: "Available for Projects", // or "Currently Busy" / "Open to Opportunities"
     availabilityColor: "success", // "success" | "warning" | "destructive"
     resumeUrl: "/Zahidul_Islam_Resume.pdf", // Add your resume to public folder
@@ -67,27 +68,8 @@ export const portfolioConfig = {
 
   /* ========================================
      🚀 FEATURED PROJECTS
-     ========================================
-     
-     Project Template:
-     {
-       id: "unique-id",
-       title: "Project Name",
-       category: "hybrid-cloud" | "wordpress" | "mobile" | "ai-ml" | "automation",
-       description: "Short description for cards",
-       fullDescription: "Detailed description for modal",
-       thumbnail: "/project-image.jpg", // Add to public folder or use URL
-       technologies: ["React", "AWS", "etc"],
-       achievements: ["Achievement 1", "Achievement 2"],
-       liveUrl: "https://...", // Optional
-       githubUrl: "https://github.com/...", // Optional
-       videoId: "youtube-video-id", // Optional: YouTube video ID
-       featured: true, // Show in hero section
-       isHealthcare: true, // Show healthcare badge
-       metrics: { users: "10K+", uptime: "99.9%" }, // Optional metrics
-     }
-     
      ======================================== */
+
   projects: [
 
     // Inside portfolioConfig.projects array:
