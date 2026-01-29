@@ -128,9 +128,11 @@ export const ContactSection = () => {
             className="space-y-8"
           >
             {/* Availability Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-success/10 border border-success/30 text-success text-sm font-medium">
-              <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
-              {personal.availability}
+            <div className="flex justify-center lg:justify-start">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-success/10 border border-success/30 text-success text-sm font-medium">
+                <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
+                {personal.availability}
+              </div>
             </div>
 
             {/* Contact Details */}
@@ -141,22 +143,22 @@ export const ContactSection = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={isInView ? { opacity: 1, y: 0 } : {}}
                   transition={{ delay: 0.3 + index * 0.1 }}
-                  className="flex items-center gap-4"
+                  className="flex items-start gap-4"
                 >
-                  <div className="p-3 rounded-xl bg-primary/10 text-primary">
+                  <div className="p-3 rounded-xl bg-primary/10 text-primary shrink-0">
                     <item.icon className="w-5 h-5" />
                   </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">{item.label}</p>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm text-muted-foreground mb-0.5">{item.label}</p>
                     {item.href ? (
                       <a
                         href={item.href}
-                        className="text-foreground font-medium hover:text-primary transition-colors"
+                        className="text-foreground font-medium hover:text-primary transition-colors block break-all"
                       >
                         {item.value}
                       </a>
                     ) : (
-                      <p className="text-foreground font-medium">{item.value}</p>
+                      <p className="text-foreground font-medium break-words">{item.value}</p>
                     )}
                   </div>
                 </motion.div>

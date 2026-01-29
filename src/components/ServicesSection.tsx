@@ -23,11 +23,10 @@ const ServiceCard = ({
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.5, delay: index * 0.1 }}
       whileHover={{ y: -8 }}
-      className={`relative glass-card p-8 flex flex-col ${
-        service.highlighted
+      className={`relative glass-card p-8 flex flex-col ${service.highlighted
           ? "border-primary/50 glow"
           : "card-hover"
-      }`}
+        }`}
     >
       {/* Popular Badge */}
       {service.highlighted && (
@@ -64,11 +63,10 @@ const ServiceCard = ({
       {/* CTA */}
       <Button
         onClick={scrollToContact}
-        className={`w-full ${
-          service.highlighted
+        className={`w-full ${service.highlighted
             ? "bg-primary text-primary-foreground hover:bg-primary/90"
             : "bg-secondary text-foreground hover:bg-secondary/80"
-        }`}
+          }`}
       >
         {service.ctaText}
       </Button>
@@ -117,6 +115,77 @@ export const ServicesSection = () => {
               inView={isInView}
             />
           ))}
+        </div>
+
+        {/* Payment Terms Section */}
+        <div className="mt-20 max-w-5xl mx-auto">
+          <h3 className="text-2xl font-bold text-center mb-8">
+            Payment <span className="gradient-text">Terms</span>
+          </h3>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {/* Small Projects */}
+            <div className="glass-card p-6 relative overflow-hidden group">
+              <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <h4 className="text-xl font-bold mb-2">Small Projects</h4>
+              <p className="text-primary font-mono text-sm mb-4">&lt;$3K Budget</p>
+              <div className="space-y-2 text-sm text-muted-foreground">
+                <div className="flex justify-between">
+                  <span>Upfront</span>
+                  <span className="text-foreground font-medium">50%</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>On Delivery</span>
+                  <span className="text-foreground font-medium">50%</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Medium Projects */}
+            <div className="glass-card p-6 relative overflow-hidden group border-primary/50">
+              <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute top-0 right-0 px-3 py-1 bg-primary/20 text-primary text-xs font-bold rounded-bl-lg">
+                MOST POPULAR
+              </div>
+              <h4 className="text-xl font-bold mb-2">Medium Projects</h4>
+              <p className="text-primary font-mono text-sm mb-4">$3K - $10K Budget</p>
+              <div className="space-y-2 text-sm text-muted-foreground">
+                <div className="flex justify-between">
+                  <span>Upfront</span>
+                  <span className="text-foreground font-medium">40%</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Mid-Project</span>
+                  <span className="text-foreground font-medium">40%</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>On Delivery</span>
+                  <span className="text-foreground font-medium">20%</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Large Projects */}
+            <div className="glass-card p-6 relative overflow-hidden group">
+              <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <h4 className="text-xl font-bold mb-2">Large Projects</h4>
+              <p className="text-primary font-mono text-sm mb-4">&gt;$10K Budget</p>
+              <div className="space-y-2 text-sm text-muted-foreground">
+                <div className="flex justify-between">
+                  <span>Upfront</span>
+                  <span className="text-foreground font-medium">30%</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>At Milestones</span>
+                  <span className="text-foreground font-medium">40%</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>On Delivery</span>
+                  <span className="text-foreground font-medium">30%</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Custom Quote CTA */}
