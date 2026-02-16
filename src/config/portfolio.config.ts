@@ -80,24 +80,24 @@ export const portfolioConfig = {
       category: ["hybrid-cloud", "ai-ml", "healthcare", "devops"],
       description: "A HIPAA-compliant, multi-cloud telemedicine platform (AWS, GCP, Azure) engineered with a 'Zero-Cost Idle' architecture and FHIR R4 interoperability.",
       fullDescription: "MediConnect V2 represents a paradigm shift in healthcare infrastructure. Unlike traditional 'always-on' monoliths, this platform utilizes a distributed microservices architecture across AWS, Google Cloud, and Azure to maximize free tiers and resilience. \n\nThe core innovation is the 'Zero-Cost Idle' pattern: services scale to zero when unused, resulting in a $0.00 monthly cloud bill during inactivity while maintaining instant scalability for thousands of concurrent patients. \n\nBeyond infrastructure, the system enforces strict regulatory compliance through 'Privacy by Design'. It features a custom AI Circuit Breaker that routes diagnostic queries between Claude (AWS), Gemini (GCP), and GPT-4 (Azure) based on real-time latency and cost.",
-      
+
       images: [
-        "https://github.com/user-attachments/assets/bf8cc79b-d429-4cce-9988-8dc490876cc2", 
-        
+        "https://github.com/user-attachments/assets/bf8cc79b-d429-4cce-9988-8dc490876cc2",
+
       ],
       thumbnail: "https://github.com/user-attachments/assets/bf8cc79b-d429-4cce-9988-8dc490876cc2", // Update with a V2 Architecture diagram if available
 
       technologies: [
-        "AWS (Cognito, DynamoDB, SSM, Bedrock)", 
-        "GCP (Cloud Run, Cloud SQL, BigQuery)", 
-        "Azure (Container Apps, OpenAI)", 
-        "Terraform (IaC)", 
-        "Docker", 
-        "HL7 FHIR R4", 
-        "TypeScript", 
+        "AWS (Cognito, DynamoDB, SSM, Bedrock)",
+        "GCP (Cloud Run, Cloud SQL, BigQuery)",
+        "Azure (Container Apps, OpenAI)",
+        "Terraform (IaC)",
+        "Docker",
+        "HL7 FHIR R4",
+        "TypeScript",
         "Stripe Connect"
       ],
-      
+
       achievements: [
         "Architected 'Zero-Cost Idle' pattern: reduced infrastructure costs by 95%",
         "Achieved FHIR R4 Interoperability for hospital data exchange",
@@ -105,22 +105,23 @@ export const portfolioConfig = {
         "Built AI Circuit Breaker for 99.99% availability across 3 clouds",
         "Atomic Locking mechanism to prevent appointment double-booking"
       ],
-      
+
       liveUrl: "https://askme-82f72.web.app/", // Use your main entry point
-      
+
       githubLinks: [
         { label: "Frontend", url: "https://github.com/Zahidulislam2222/mediconnect-hub" },
         { label: "Infrastructure (Terraform)", url: "https://github.com/Zahidulislam2222/mediconnect-infrastructure-develop" }
       ],
+      pdfUrl: "https://github.com/user-attachments/files/25336017/MediConnect_2.0_Multi-Cloud_Zero_Cost_compressed.pdf", // Example PDF link
 
-      videoId: "Oo_Lilyasi0", // Update if you have a V2 walkthrough
+      //videoId: "Oo_Lilyasi0", // Update if you have a V2 walkthrough
       featured: true,
       isHealthcare: true,
       isHybridCloud: true,
-      metrics: { 
-        cost: "$0.00 Idle Cost", 
-        compliance: "HIPAA/GDPR/FHIR", 
-        clouds: "AWS + GCP + Azure" 
+      metrics: {
+        cost: "$0.00 Idle Cost",
+        compliance: "HIPAA/GDPR/FHIR",
+        clouds: "AWS + GCP + Azure"
       },
     },
 
@@ -694,6 +695,7 @@ export interface Project {
     label: string;
     url: string;
   }[];
+  pdfUrl?: string;           // Optional PDF link
   videoId?: string;          // Optional
   featured?: boolean;        // Optional
   isHealthcare?: boolean;    // Optional

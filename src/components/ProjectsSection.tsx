@@ -391,6 +391,21 @@ const ProjectCard = forwardRef<HTMLDivElement, {
               </Button>
             )
           )}
+
+          {/* PDF Button */}
+          {project.pdfUrl && (
+            <Button
+              size="sm"
+              variant="outline"
+              asChild
+            >
+              <a href={project.pdfUrl} target="_blank" rel="noopener noreferrer">
+                <FileText className="w-4 h-4 mr-2" />
+                View PDF
+              </a>
+            </Button>
+          )}
+
           {project.videoId && (
             <Button
               size="sm"
