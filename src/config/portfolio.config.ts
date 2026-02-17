@@ -603,6 +603,28 @@ export const portfolioConfig = {
   ],
 
   /* ========================================
+     🤝 ETHICAL COMMITMENT
+     ======================================== */
+  ethicalCommitment: {
+    title: "MY ETHICAL & PROFESSIONAL COMMITMENT",
+    subtitle: "I believe in technical honesty. I do not \"check boxes\"; I verify data integrity.",
+    items: [
+      {
+        key: "Ethical Boundaries",
+        value: "I do not work on projects involving interest-based finance (Riba), conventional insurance, gambling, adult content, or any haram activities."
+      },
+      {
+        key: "Transparency",
+        value: "You get 100% ownership of the source code (GitHub/GitLab) and complete documentation."
+      },
+      {
+        key: "Communication",
+        value: "I provide clear, technical updates and am available for deep-dive architectural discussions."
+      }
+    ]
+  },
+
+  /* ========================================
      ⭐ TESTIMONIALS
      ========================================
      

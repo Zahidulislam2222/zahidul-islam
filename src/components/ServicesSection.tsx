@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
-import { Check, Sparkles } from "lucide-react";
+import { Check, Sparkles, Shield, Eye, MessageSquare, Scale, FileText } from "lucide-react";
 import { portfolioConfig } from "@/config/portfolio.config";
 import { Button } from "@/components/ui/button";
 
@@ -24,8 +24,8 @@ const ServiceCard = ({
       transition={{ duration: 0.5, delay: index * 0.1 }}
       whileHover={{ y: -8 }}
       className={`relative glass-card p-8 flex flex-col ${service.highlighted
-          ? "border-primary/50 glow"
-          : "card-hover"
+        ? "border-primary/50 glow"
+        : "card-hover"
         }`}
     >
       {/* Popular Badge */}
@@ -64,8 +64,8 @@ const ServiceCard = ({
       <Button
         onClick={scrollToContact}
         className={`w-full ${service.highlighted
-            ? "bg-primary text-primary-foreground hover:bg-primary/90"
-            : "bg-secondary text-foreground hover:bg-secondary/80"
+          ? "bg-primary text-primary-foreground hover:bg-primary/90"
+          : "bg-secondary text-foreground hover:bg-secondary/80"
           }`}
       >
         {service.ctaText}
@@ -186,6 +186,61 @@ export const ServicesSection = () => {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Ethical Commitment Section */}
+        <div className="mt-20 max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="glass-card p-8 md:p-10 relative overflow-hidden border-primary/20 bg-secondary/10"
+          >
+            {/* Background elements */}
+            <div className="absolute top-0 right-0 p-8 -mt-4 -mr-4 opacity-[0.03] pointer-events-none">
+              <Shield className="w-64 h-64 text-primary" />
+            </div>
+
+            <div className="relative z-10 text-center mb-10">
+              <div className="inline-flex items-center justify-center p-3 mb-6 rounded-full bg-primary/10 text-primary">
+                <Scale className="w-8 h-8" />
+              </div>
+
+              {portfolioConfig.ethicalCommitment && (
+                <>
+                  <h3 className="text-2xl md:text-3xl font-bold mb-4 bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
+                    {portfolioConfig.ethicalCommitment.title}
+                  </h3>
+
+                  <div className="relative max-w-2xl mx-auto mb-8">
+                    <span className="absolute -top-4 -left-4 text-4xl text-primary/20 font-serif">"</span>
+                    <p className="text-muted-foreground text-lg italic leading-relaxed px-6">
+                      {portfolioConfig.ethicalCommitment.subtitle}
+                    </p>
+                    <span className="absolute -bottom-8 -right-4 text-4xl text-primary/20 font-serif rotate-180">"</span>
+                  </div>
+
+                  <div className="grid md:grid-cols-3 gap-6 relative z-10 pt-4">
+                    {portfolioConfig.ethicalCommitment.items.map((item, index) => (
+                      <div
+                        key={index}
+                        className="group flex flex-col items-center text-center p-6 rounded-xl bg-background/40 backdrop-blur-sm border border-primary/10 hover:border-primary/30 hover:bg-background/60 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/5"
+                      >
+                        <div className="mb-4 p-3 rounded-full bg-primary/5 group-hover:bg-primary/10 transition-colors">
+                          {item.key.includes("Ethical") && <Shield className="w-6 h-6 text-primary" />}
+                          {item.key.includes("Transparency") && <FileText className="w-6 h-6 text-primary" />}
+                          {item.key.includes("Communication") && <MessageSquare className="w-6 h-6 text-primary" />}
+                        </div>
+
+                        <h4 className="font-bold text-foreground mb-3 text-lg">{item.key}</h4>
+                        <p className="text-sm text-muted-foreground leading-relaxed">{item.value}</p>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+          </motion.div>
         </div>
 
         {/* Custom Quote CTA */}
