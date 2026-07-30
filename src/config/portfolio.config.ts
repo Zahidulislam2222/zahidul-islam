@@ -527,6 +527,131 @@ WCAG 2.1 AA accessibility, GDPR data export/erase via WordPress Privacy API, coo
     },
 
     {
+      id: "jwalker-knowledge-assistant",
+      title: "JWALKER Knowledge Assistant — Grounded RAG for a WordPress Membership Site",
+      category: ["ai-ml", "wordpress", "fullstack"],
+
+      description:
+        "Status first: implemented and locally verified as of 15 July 2026, but production is not proven — live deployment, live source pulls for three of the four connectors, and the production WordPress flow are all blocked on client-controlled access. Problem: a creator's material sat in five disconnected silos (two YouTube channels, a membership platform, a course platform, a cloud drive, and selected reference sites), so members had no way to query any of it and answering one question meant hunting through hours of video. Solution: a members-only chat front door on WordPress backed by a single FastAPI process and one portable SQLite file — hybrid dense + keyword retrieval fused by Reciprocal Rank Fusion, a measured relevance floor that returns a configured refusal instead of inventing an answer, and no-fabrication rules locked in code beneath an editable persona. No vector database, no paid plugin, no monthly SaaS.",
+
+      fullDescription: `A members-only knowledge assistant for a WordPress membership site. A member asks a plain question in an embedded chat interface and gets an answer drawn from the creator's own material, with source citations, instead of a generic chatbot answer or an open-internet result.
+
+HONEST STATUS — READ THIS FIRST
+As of the 15 July 2026 verification run, the local package is complete and verified; the deployed system is not, and is not represented as such. Not claimed as passed: live server inventory and deployment (the provided cloud login cannot enumerate instances and no usable address, login user or installed key was supplied), live Drive/membership/course/restricted-web pulls (machine access, exports, folder identifiers and approved lists were not supplied), the production WordPress logged-out/logged-in HTTPS flow, PHP syntax validation of the plugin (no PHP interpreter in the verification environment), and an independent fresh-context review of the final diff. A development credential exposed during container configuration validation requires rotation before any further provider use.
+
+THE CONSTRAINTS THAT SHAPED EVERYTHING
+Three client constraints drove every architecture decision: no recurring subscription costs (no paid plugins, no hosted vector database, no flat monthly SaaS — only a small server and pay-as-you-go model usage on the client's own account), answers must stay grounded in the creator's own content with internet search restricted rather than open, and members-only access at go-live. Two infrastructure facts changed the plan mid-build: the WordPress site runs on shared managed hosting that serves PHP only, so the engine could never live where the site lives; and the deployment target became an existing cloud instance already running six unrelated agents that must not be disturbed, which turned deployment from a routine install into an isolation problem.
+
+GROUNDING IS NOT LEFT TO THE PROMPT
+A relevance gate runs on the retrieved passages before generation. When nothing clears the threshold, the assistant returns a configured refusal — produced without a model call at all — instead of an invented answer. The rules forbidding fabrication live in code and cannot be removed by editing the assistant's configurable personality. Every grounded reply carries deduplicated source citations.
+
+HYBRID RETRIEVAL WITHOUT A VECTOR DATABASE
+Dense semantic similarity is computed in NumPy over embeddings stored in a single SQLite file; keyword matching uses SQLite FTS5 over the same rows; the two rankings are combined with Reciprocal Rank Fusion. Pure vector search reliably misses exact terms such as a program name or a job title, and the keyword arm recovers them. Embeddings are pluggable: a local CPU sentence-transformer model (384-dim) is the zero-cost production default, and a hosted API (768-dim) is the torch-free alternative, selected by configuration.
+
+ATOMIC SOURCE SYNCHRONIZATION
+Four connectors feed the knowledge base: public YouTube transcripts, Google Drive via a read-only service account, a membership platform, and a course platform. YouTube ingestion is additive by stable video URL. The other three synchronize a complete snapshot atomically — discovery, extraction and embedding all complete before a single database transaction — so a re-index adds new documents, replaces edited documents, removes deleted documents, and leaves the last good database intact when a connector fails.
+
+MEMBERS-ONLY BY CONSTRUCTION
+The WordPress plugin renders nothing for logged-out visitors and mints a short-lived HMAC-signed token; the long-lived signing secret never reaches browser JavaScript. Ingestion runs under a separate secret. Rate limiting is per resolved client identity and returns HTTP 429. The engine refuses to start when production configuration is unsafe.
+
+RESTRICTED INTERNET SEARCH THAT FAILS CLOSED
+A separate query-time web source exists but is never ingested, and it cannot run unless the operator has supplied both an approved keyword allowlist and an approved list of HTTPS sites. Both fallback and equal-source modes preserve honest provenance and label web-sourced results.
+
+ISOLATED DEPLOYMENT
+Because six unrelated agents already run on the target instance, every deployment artifact is additive: a dedicated user, directory, virtual environment, localhost port, new systemd service and timer units, and a new nginx server block on its own hostname. No existing agent is edited or restarted.
+
+VERIFIED EVIDENCE (15 JULY 2026 LOCAL RUN)
+Eleven offline integration and behavior scripts covering connector parsing, hybrid retrieval, atomic synchronization, recursive Drive discovery, membership and course API contracts, production configuration, backup and retention, signed HTTP authentication, ingestion-secret separation, rate limiting, source filters, restricted-web provenance, deployment rendering, release and configuration auditing, and legacy database migration. Ruff, MyPy, Bandit (zero findings, zero suppressions), Semgrep Python/OWASP, dependency consistency and JavaScript syntax all pass. A fresh container image build and quiet compose validation succeeded, and a temporary isolated container returned success from both health routes. The release archive passed integrity, forbidden-path audit and an independent Gitleaks scan. Packaged knowledge base: 228 chunks from 10 distinct video URLs. These describe one dated verification run of the local package, not a production proof.`,
+
+      thumbnail: "",
+
+      technologies: [
+        "Python + FastAPI (Single-Process Engine)",
+        "SQLite + FTS5 (Single-File Knowledge Store, No Vector DB)",
+        "NumPy Cosine + Reciprocal Rank Fusion (Hybrid Retrieval)",
+        "Pluggable Embeddings (Local Sentence-Transformer 384-dim / Hosted 768-dim)",
+        "Google Gemini Flash (Grounded Generation + Restricted Web Search)",
+        "WordPress Plugin (PHP) — HMAC-Signed Short-Lived Member Tokens",
+        "Pydantic Settings (One Typed Configuration Surface)",
+        "Four Content Connectors (YouTube, Drive Service Account, Membership API, Course API)",
+        "Atomic Snapshot Sync (Stable Source Keys + Content Hashes)",
+        "systemd Hardened Units + Re-Index & Backup Timers",
+        "nginx Additive Server Block + localhost Bind",
+        "SQLite Online Backup + Retention Pruning",
+        "Allowlist Release Builder + Gitleaks Secret Audit",
+        "Docker (Verified Optional Packaging, Not Required)",
+      ],
+
+      achievements: [
+        "Hybrid retrieval with no vector database — dense NumPy cosine plus SQLite FTS5 keyword ranking fused by RRF over one portable file, meeting the client's hard no-subscription constraint",
+        "Grounding enforced by a measured relevance floor rather than a prompt instruction: below threshold the assistant refuses without ever calling the model, so a refusal costs nothing",
+        "No-fabrication rules locked in code beneath an editable persona — the client can retune voice, temperature and the refusal wording without being able to edit away the safety rules",
+        "Atomic snapshot synchronization for three of four connectors: add, edit and delete all reflected, and a failed discovery leaves the last good database untouched",
+        "Members-only by construction — the plugin renders nothing when logged out, and the long-lived signing secret never reaches browser JavaScript",
+        "Restricted web search fails closed: it cannot run without both an approved keyword allowlist and an approved HTTPS site list, and both modes preserve honest provenance",
+        "Deployment designed as an isolation problem because six unrelated agents already run on the target box — every artifact is additive and no existing agent is touched",
+        "Release packaging built from an explicit allowlist and independently scanned, so no .env, credential file, private key, dossier or log can reach the client archive",
+        "Verification report separates what passed from what is explicitly not claimed, including the exposed development credential that requires rotation",
+      ],
+
+      featured: false,
+
+      isWordpress: true,
+
+      metrics: {
+        status: "Local package verified 15 Jul 2026 · production NOT proven (client access blocked)",
+        corpus: "228 chunks from 10 distinct video URLs (verified packaged state)",
+        retrieval: "Dense NumPy cosine + SQLite FTS5, fused by Reciprocal Rank Fusion",
+        infra: "One FastAPI process + one SQLite file · no vector database, no paid plugin, no monthly SaaS",
+        auth: "HMAC-signed short-lived member tokens · separate ingest secret · per-client rate limiting",
+        gates: "Ruff · MyPy · Bandit (0 findings, 0 suppressions) · Semgrep OWASP · Gitleaks · container health",
+        blocked: "Live EC2 deploy, live Drive/membership/course pulls, production WordPress flow, PHP syntax check, independent review",
+      },
+
+      beforeAfter: [
+        { label: "Content access", before: "Five disconnected silos with no query surface; answering one question meant hunting through long-form video and scattered posts", after: "One members-only chat entry point over a unified knowledge base, with source citations on every answer" },
+        { label: "Architecture", before: "A container-orchestrated stack with a dedicated vector database, sized far above the corpus and against the client's cost constraint", after: "One Python process and one portable SQLite file; containers kept as optional packaging, not a requirement" },
+        { label: "Grounding", before: "No gate between retrieval output and the model", after: "A per-provider cosine floor, a configured refusal returned without a model call, and no-fabrication rules locked beneath an editable persona" },
+        { label: "Refresh", before: "Transcript ingestion could only add, and re-running risked duplicates", after: "Idempotent additive transcript ingestion plus atomic add/edit/delete sync for the three snapshot sources" },
+        { label: "Failure behavior", before: "A transcript provider block was swallowed and reported as \"no transcript\", which could empty the store silently", after: "Genuine absence is distinguished from a provider block; a block stops the run loudly and leaves stored data untouched" },
+        { label: "Access control", before: "Open endpoints", after: "Signed short-lived member tokens, a separate ingestion secret, per-client rate limiting, and startup refusal on unsafe production configuration" },
+      ],
+
+      challenges: [
+        {
+          problem: "The first architecture used a dedicated vector database and container orchestration for a modest corpus — chosen out of habit rather than sized to the work or the client's explicit no-subscription constraint.",
+          solution: "Collapsed it to a single FastAPI process with a file-based hybrid store (NumPy cosine + FTS5 + RRF) and re-verified retrieval end to end.",
+          outcome: "Running cost dropped to a small server plus pay-as-you-go model usage, with no external database to run, secure or pay for.",
+        },
+        {
+          problem: "After switching embedding providers, an off-topic question came back marked grounded with sources, even though the model itself correctly refused — the relevance floor had been tuned for the previous model.",
+          solution: "Measured the actual cosine distributions for known-relevant and known-irrelevant pairs and set a provider-specific floor, documented per provider in configuration.",
+          outcome: "Off-topic questions now return ungrounded with zero sources; a similarity threshold is treated as a property of the embedding model, never inherited across models.",
+        },
+        {
+          problem: "Growing the demo corpus meant clearing the knowledge database and re-ingesting — every fetch then returned \"no transcript\" and the store was left empty, because the ingester swallowed a provider IP block into the same outcome as genuine absence.",
+          solution: "Separated genuine absence from a provider block so a block raises and stops the run loudly with the database untouched, and made ingestion idempotent by recording ingested URLs so there is never a reason to wipe the store.",
+          outcome: "A third-party block can no longer produce a success-shaped empty result, and good data is never deleted before its replacement is verified.",
+        },
+        {
+          problem: "Two independent free-tier limits collided: a full-corpus ingest failed on an embedding quota, and re-running to recover re-fetched every transcript and triggered the transcript provider's burst block.",
+          solution: "Batched and paced embedding requests with backoff honoring the server-supplied retry delay, cached each transcript to disk the instant it was fetched, and added a deliberate delay between transcript fetches.",
+          outcome: "The expensive-to-fetch step is now persisted before the rate-limited step, so an embedding retry never touches the transcript provider again.",
+        },
+        {
+          problem: "Connectors skipped known URLs, which made re-runs cheap but also made edits and deletions invisible — a changed document at a known URL was simply skipped.",
+          solution: "Introduced stable source keys and content hashes and replaced skip-based ingestion with atomic snapshot synchronization for the three sources where a complete snapshot is meaningful.",
+          outcome: "Idempotency by URL was recognized as not being synchronization; edits and deletions now propagate correctly.",
+        },
+        {
+          problem: "A container configuration validation command was treated as a structural syntax check, but it expands environment files by default and printed a resolved development credential into tool output.",
+          solution: "Treated the credential as compromised and recorded it as requiring rotation; future validation uses a generated fake environment file or quiet output and never prints resolved secrets.",
+          outcome: "The rotation requirement is stated openly in the verification report rather than quietly dropped, and the release archive builder excludes and scans for the same material.",
+        },
+      ],
+    },
+
+    {
       id: "everyday-dental-surgery",
       title: "EDS Dental — Clinic Platform for Real Client",
       category: ["healthcare", "fullstack", "compliance"],
@@ -2025,6 +2150,12 @@ VitalProbe does not certify a target, grant regulatory approval, replace clinica
         { name: "Local Model Workers (Ollama) + Bounded Provider Fallback", tier: "proficient" },
         { name: "Multi-Turn Synthetic Scenario Simulation + Trajectory Evaluation", tier: "proficient" },
         { name: "Evidence Artifacts for AI Runs (Canonical JSON + Self-Contained HTML Dossier)", tier: "expert" },
+        { name: "Reciprocal Rank Fusion over SQLite FTS5 + NumPy Cosine (Hybrid RAG, No Vector Database)", tier: "proficient" },
+        { name: "Measured Relevance Floors + Refusal Guardrails (Per-Embedding-Model Thresholds)", tier: "proficient" },
+        { name: "Pluggable Embedding Providers + Dimension Contract (Local CPU 384-dim / Hosted 768-dim)", tier: "proficient" },
+        { name: "Google Gemini Flash (Grounded Generation + Restricted, Fail-Closed Web Search)", tier: "proficient" },
+        { name: "Atomic Snapshot Sync for RAG Corpora (Stable Source Keys + Content Hashes, Add/Edit/Delete)", tier: "proficient" },
+        { name: "Editable Persona Separated from Locked No-Fabrication Rules", tier: "proficient" },
       ],
     },
     {
@@ -2048,6 +2179,9 @@ VitalProbe does not certify a target, grant regulatory approval, replace clinica
         { name: "Capability-Based Secret Handling (Values Never Enter Model Context)", tier: "proficient" },
         { name: "Ruff + strict mypy + Python Quality Gates", tier: "expert" },
         { name: "gitleaks + Pre-Commit Security Gates", tier: "expert" },
+        { name: "Additive Deployment Templates (systemd + nginx) onto Hosts Running Unrelated Services", tier: "proficient" },
+        { name: "Allowlist Release Packaging + Forbidden-Path Audit (Secret-Safe Client Archives)", tier: "proficient" },
+        { name: "Semgrep Python/OWASP + Bandit (Zero Findings, Zero Suppressions)", tier: "proficient" },
       ],
     },
     {
@@ -2081,6 +2215,10 @@ VitalProbe does not certify a target, grant regulatory approval, replace clinica
         { name: "Python Flask (Async Job APIs, Background Workers, Status Polling)", tier: "proficient" },
         { name: "SQLite Transactional State + Content-Addressed Artifact Stores", tier: "proficient" },
         { name: "AIOSEO API (Bulk WordPress Metadata Persistence)", tier: "expert" },
+        { name: "SQLite FTS5 Full-Text Search + Online Backup + Legacy Schema Migration", tier: "proficient" },
+        { name: "HMAC-Signed Short-Lived Member Tokens from WordPress (Signing Secret Never in Browser JS)", tier: "proficient" },
+        { name: "Google Drive Service Account (Read-Only Scope, Recursive Discovery)", tier: "proficient" },
+        { name: "Multi-Format Text Extraction (PDF, Word, HTML, Markdown) with No Network Access", tier: "proficient" },
       ],
     },
     {

@@ -146,7 +146,16 @@ const ProjectDetailModal = ({
 
   if (!isOpen || !project) return null;
 
-  const projectImages = project.images || [project.thumbnail];
+  // Projects without artwork carry thumbnail: "" — fall back to an initials
+  // placeholder instead of rendering a broken <img>.
+  const projectImages = (project.images || [project.thumbnail]).filter(Boolean);
+  const hasImages = projectImages.length > 0;
+  const modalInitials = project.title
+    .split(/[\s\-—]+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0].toUpperCase())
+    .join("");
 
   const nextImage = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -184,20 +193,28 @@ const ProjectDetailModal = ({
 
           {/* Image Carousel */}
           <div className="relative aspect-video bg-secondary group/image overflow-hidden">
-            <AnimatePresence mode="wait">
-              <motion.img
-                key={currentImageIndex}
-                src={projectImages[currentImageIndex]}
-                alt={project.title}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                className="w-full h-full object-cover cursor-zoom-in"
-                onClick={() => onImageClick(projectImages[currentImageIndex])}
-                loading="lazy"
-              />
-            </AnimatePresence>
+            {hasImages ? (
+              <AnimatePresence mode="wait">
+                <motion.img
+                  key={currentImageIndex}
+                  src={projectImages[currentImageIndex]}
+                  alt={project.title}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="w-full h-full object-cover cursor-zoom-in"
+                  onClick={() => onImageClick(projectImages[currentImageIndex])}
+                  loading="lazy"
+                />
+              </AnimatePresence>
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 via-primary/10 to-secondary">
+                <span className="text-primary font-bold text-6xl tracking-tight select-none">
+                  {modalInitials}
+                </span>
+              </div>
+            )}
 
             {projectImages.length > 1 && (
               <>
