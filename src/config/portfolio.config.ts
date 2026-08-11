@@ -1805,35 +1805,43 @@ Presented as controlled and production-oriented, not infallible. Historical evid
       category: ["automation", "ai-ml"],
 
       description:
-        "Problem: The agency needed repeatable social content for many small-business clients without designing every image and writing every caption by hand — and the real risk was not generation, it was whether clients would actually review, request changes and approve. Solution: A team member onboards a business, the system researches the brand from its website and social profiles, AI generates scheduled post concepts with captions, hashtags and images, the client reviews watermarked assets through a tokenized portal, and the agency gives final internal approval before clean assets are packaged for download. Two approval layers mean nothing reaches a client's channels unreviewed. Latest recorded evidence: 21/21 live end-to-end checks passed.",
+        "Problem: The agency needed a dependable way to turn either brand research or client-supplied media into dated social campaigns without hand-writing every caption or losing approval state in email threads. Solution: A generally enabled n8n/Python/PHP platform with a protected Media Library, account-scoped client dashboard, background media-aware copy generation, calendar review, two-stage approval, and clean ZIP delivery. The client chooses dates and images/videos; the copy model sees the selected visual but does not replace it. Latest live evidence includes two 50-post paid HTTPS runs (100 captions, zero image-generation calls), two 23/23 media-aware flows, and a 22/22 real Chrome approval run.",
 
-      fullDescription: `Fine Touch Marketing (FTM) is an ongoing paid client engagement — a med-spa marketing agency. This is the social content system of three separate production systems built for them. Stage: live-maintenance trial platform.
+      fullDescription: `Fine Touch Marketing (FTM) is an ongoing paid client engagement — a med-spa marketing agency. This is the social content system of three separate production systems built for them. Stage: generally enabled live-maintenance platform.
 
 THE ACTUAL PRODUCT RISK
 The trial architecture deliberately validates the workflow and the commercial process before committing to a full multi-tenant SaaS rewrite. The main product risk was never whether content could be generated — it was whether clients reliably review, request changes and approve through a portal. The system is built to answer that question.
 
-FLOW
-A team member onboards a business. The system researches that brand from its website and social profiles. AI generates scheduled post concepts with captions, hashtags and images. Watermarked review assets go to a tokenized client portal where the client can approve, request changes, request repeated image changes, or edit caption and hashtag text directly. After client approval the agency sees an internal awaiting-approval queue and gives or withholds final approval. Only then are clean, unwatermarked assets packaged as a ZIP for download.
+TWO PRODUCTION PATHS
+The established path researches a brand from its website and social profiles, then generates scheduled concepts with captions, hashtags and images. The additive media-first path starts with approved client photography, video or artwork in a protected Media Library. Fine Touch Marketing creates a dated campaign and durable client-dashboard link; the client chooses dates and eligible media, gives one campaign-wide instruction, and completing selection starts caption work automatically.
+
+MEDIA-AWARE BACKGROUND COPY
+Caption and hashtag generation runs as persisted background work rather than a browser request that must stay open. The provider receives the selected image, or a video's confined poster frame, as visual evidence alongside bounded brand/campaign context. It remains copy-only: the selected media is preserved and the verified path records zero image-generation calls. The dashboard renders labels and controls immediately, hydrates protected previews through scoped tickets and a generation-safe cache, and reads terminal copy/usage state back from the operational store.
+
+REVIEW AND DELIVERY
+The client reviews the prepared campaign in a calendar, can approve, request changes, request repeated image changes, or edit caption and hashtag text. After client approval the agency sees a separate internal queue and gives or withholds final approval. Only then are authorized clean assets and matching copy packaged for download.
 
 ROLES AND BOUNDARIES
-Three roles: administrator, team member, end client. Team visibility is isolated — a team member sees their own clients. Clean assets are protected until internal approval; review assets are watermarked. The verified product boundary ends at generation, review, internal approval and clean-asset packaging: approved assets are downloaded for manual scheduling. Direct publishing to a social network is explicitly not the current verified path, and neither is a production-grade multi-tenant identity platform, guaranteed scraping coverage, or a transactional database.
+Three roles: administrator, team member, end client. Team visibility is isolated — a team member sees their own clients. Generated-media review assets are watermarked; Media Library previews remain protected by session, campaign scope and short-lived preview tickets. Clean assets stay behind internal approval. The verified boundary ends at generation, review, internal approval and clean-asset packaging: approved assets are downloaded for manual scheduling. Direct social publishing, a production-grade multi-tenant identity platform, guaranteed scraping coverage and a transactional database are not claimed.
 
 ARCHITECTURE
-Static browser applications (admin/team dashboard plus tokenized client portal) call a public proxy boundary that forwards approved routes to an n8n workflow suite. n8n owns orchestration and state transitions against Google Sheets state — clients, posts, users, settings and notification/log tabs. Server-side utilities handle image generation and editing, brand research, watermarking, clean-asset access and archive creation.
+Static browser applications (admin/team dashboard, protected Media Library and client campaign dashboard) call a protected API/proxy boundary. n8n owns the established orchestration and state transitions against Google Sheets. Server-side Python/PHP services handle private media intake, normalization, categorization, confined visual-context reads, protected previews, per-minute copy jobs, usage records, revisions, approval and archive creation.
 
 VERIFIED TEST EVIDENCE
-An 18-phase full workflow trial covering admin login, team creation and login, client creation by both admin and team, brand scraping, content generation with images/captions/hashtags, approval-link creation, portal viewing, client approve/reject/regenerate/edit, admin awaiting counts and final decision, clean ZIP generation, team visibility isolation, and exact test-data cleanup. A reliability suite recorded 17/17 passing after repairs for sheet quota pressure, notification propagation, regeneration version handling, duplicate response data and image-generation timing. The current feature suite recorded 21/21 live checks passing after adding clean download behavior, portal presentation, multi-post-per-day scheduling, client and admin bulk approval, direct caption/hashtag editing, repeated image-change requests, live admin status filters, administrator AI edit and image upload, and social-profile brand enrichment.
+The established system retains an 18-phase full workflow pass, a 17/17 reliability suite and a 21/21 live feature suite. The released Media Library then completed Phase 10 acceptance and Phase 11 controlled general release. The 11 August media-aware release passed 18/18 admin campaign-link persistence checks, 23/23 twice on fresh client campaigns, two independent 23/23 paid HTTPS scale runs on fresh 50-post campaigns (100 captions total, every post in review, usage recorded, image_calls=0), a 22/22 real Chrome calendar approval, and 32/32 protected-thumbnail checks. Final scoped release parity was 38 files in sync, with no local-ahead, absent or live-ahead file.
 
 HONEST STATUS
-These are dated verification records, not permanent guarantees — the relevant suite is re-run after workflow, frontend, provider or schema changes. Local workflow snapshots are not assumed to be the active production revision: workflow exports, deployment payloads and live state can diverge, so active workflow identity and source parity are confirmed before changing behavior.`,
+These are dated verification records, not permanent guarantees. Local snapshots are never assumed to be the active production revision. A separate broad storage audit still reports historical archived-row debris and orphan files, although no ready row is currently broken; cleanup remains an ownership-gated task. Direct design-tool-link PDF ingestion is parked by owner decision, so the released intake path expects actual media files or a ZIP bundle.`,
 
       thumbnail: "",
 
       technologies: [
         "n8n Workflow Suite (Orchestration + State Transitions)",
-        "Static HTML/CSS/JavaScript Admin Dashboard + Tokenized Client Portal",
+        "Static HTML/CSS/JavaScript Admin + Media Library + Client Campaign Dashboards",
         "Public Webhook Proxy + Protected API Boundary",
-        "Claude API (Anthropic) — Captions, Hashtags, Post Concepts",
+        "Python Background Copy Worker + PHP 7.4 API Runtime",
+        "Claude API (Anthropic) — Media-Aware Captions, Hashtags, Post Concepts",
+        "Protected Preview Tickets + Generation-Safe Catalog Cache",
         "AI Image Generation + Server-Side Image Editing Utilities",
         "Watermarking Pipeline (Protected Clean Assets vs Review Assets)",
         "Google Sheets API (Clients, Posts, Users, Settings, Logs)",
@@ -1844,35 +1852,50 @@ These are dated verification records, not permanent guarantees — the relevant 
 
       achievements: [
         "Real ongoing paid client engagement — Fine Touch Marketing (med-spa marketing agency)",
-        "Latest recorded integrated evidence: 21/21 live end-to-end checks passed (current feature suite)",
+        "Two fresh 50-post paid HTTPS runs: 100 real captions, every post reached review, usage recorded, image_calls=0",
+        "Media-aware client flow passed 23/23 twice; real Chrome calendar approval passed 22/22",
+        "Admin campaign-link persistence passed 18/18 across navigation, reload, closed tab and sign-in",
+        "Protected thumbnail coverage passed 32/32; final scoped deployment parity was 38 in sync with none ahead or absent",
+        "Client-selected image or video poster frame grounds the copy call without replacing the selected media",
         "18-phase full workflow trial passed, including team visibility isolation and exact test-data cleanup",
-        "Reliability suite 17/17 after repairs for sheet quota pressure, notification propagation, regeneration versioning, duplicate response data and image-generation timing",
-        "Two-layer approval: client approves in a tokenized portal, then the agency gives final internal approval before any clean asset is released",
-        "Clean assets protected behind internal approval — clients review watermarked versions only",
-        "Client portal supports approve, request changes, repeated image-change requests, and direct caption/hashtag editing",
-        "Brand research pulls from website and social profiles so generated content matches the actual business",
-        "Multi-post-per-day scheduling, bulk approval for both client and admin, and live admin status filters",
+        "Earlier reliability 17/17 and live feature 21/21 suites remain recorded for the established generated-media path",
+        "Two-layer approval: client calendar review → internal agency approval → authorized clean package",
         "Scope stated honestly: the verified boundary ends at clean-asset packaging for manual scheduling — direct social publishing is not claimed",
       ],
 
       metrics: {
         client: "Fine Touch Marketing (med-spa marketing agency) — ongoing paid engagement",
-        status: "Live-maintenance trial platform (validating workflow before a multi-tenant rewrite)",
-        evidence: "21/21 live end-to-end checks · 18-phase workflow trial · 17/17 reliability suite",
-        approval: "Two Layers: Tokenized Client Portal → Internal Agency Approval → Clean Asset Release",
+        status: "Generally enabled live-maintenance platform (trial architecture before a multi-tenant rewrite)",
+        evidence: "2 × 50-post paid runs · 23/23 twice media-aware · 22/22 Chrome approval · 38-file parity",
+        approval: "Two Layers: Client Calendar Review → Internal Agency Approval → Clean Asset Release",
         roles: "Administrator · Team Member · End Client (team visibility isolated)",
-        assets: "Watermarked Review Assets · Protected Clean Assets · ZIP Packaging",
-        boundary: "Generation → Review → Approval → Packaging. Manual scheduling; direct publishing not claimed",
+        assets: "Private Media Library · Scoped Preview Tickets · Protected Clean Assets · ZIP Packaging",
+        boundary: "Research/Media Selection → Background Copy → Review → Approval → Packaging. Publishing remains manual",
       },
 
       beforeAfter: [
-        { label: "Content creation", before: "Design every image and write every caption by hand per client", after: "Brand-researched AI generation of scheduled post concepts with captions, hashtags and images" },
-        { label: "Approval", before: "Email back-and-forth with no record of who approved what", after: "Tokenized client portal then internal agency approval, with state tracked per post" },
-        { label: "Asset protection", before: "Finished assets shared before sign-off", after: "Clients see watermarked reviews; clean assets release only after internal approval" },
-        { label: "Revisions", before: "One-shot — a rejection meant starting over manually", after: "Request changes, repeated image-change requests, and direct caption/hashtag editing in the portal" },
+        { label: "Campaign setup", before: "Loose client files, dates and instructions coordinated manually", after: "Protected media library, guided date/media selection and one campaign-wide instruction" },
+        { label: "Caption writing", before: "Write every caption by hand without reliable visual context", after: "Background copy jobs see the selected image/video poster while preserving the source media" },
+        { label: "Approval", before: "Email back-and-forth with no durable state", after: "Client calendar review then separate agency approval, tracked per version" },
+        { label: "Delivery", before: "Manually match approved copy to the correct clean files", after: "Only internally approved media and matching copy enter the authorized ZIP" },
       ],
 
       challenges: [
+        {
+          problem: "Caption AI could write generic copy because it could not see the exact image or video the client selected.",
+          solution: "Resolved the selected image or a video's poster frame inside the private media root and supplied it as bounded visual context to the copy provider, while keeping the call copy-only.",
+          outcome: "Two 50-post live runs produced 100 review-ready captions with usage recorded and image_calls=0.",
+        },
+        {
+          problem: "A power interruption left the release genuinely split between already-live frontend files and local-only backend/admin files.",
+          solution: "Ran a read-only drift audit, resumed from the exact local-ahead bytes, verified server imports and PHP parsing, then repeated independent parity checks.",
+          outcome: "Final release parity was 38 in sync, 0 local ahead, 0 absent and 0 live ahead.",
+        },
+        {
+          problem: "Protected previews and campaign links felt fragile: media controls waited on thumbnail work, and a useful dashboard URL could disappear after navigation or closing a tab.",
+          solution: "Painted media metadata immediately, reused scoped preview tickets through a generation-safe cache, and persisted links in account-scoped storage while retaining server-side revocation.",
+          outcome: "Protected thumbnails passed 32/32 and campaign-link persistence passed 18/18 across navigation, reload, closed-tab and sign-in scenarios.",
+        },
         {
           problem: "A working interface hid missing or stale backend behavior, so the UI implied features that the deployed automation did not actually perform.",
           solution: "Established source-of-truth rules — confirm active workflow identity and source parity before trusting any local snapshot — and traced single actions end to end.",
