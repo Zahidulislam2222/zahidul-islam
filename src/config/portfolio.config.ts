@@ -1925,6 +1925,131 @@ These are dated verification records, not permanent guarantees. Local snapshots 
     },
 
     {
+      id: "ftm-security-incident-response",
+      title: "Server-Wide WordPress Malware Containment & Incident Response (Client Engagement)",
+      category: ["security", "wordpress", "compliance"],
+
+      description:
+        "Problem: A shared hosting estate carrying many WordPress installations was running a self-healing malware chain. Sites still returned HTTP 200, so availability hid the compromise. The first scope estimate was wrong because it searched for known filenames on disk \u2014 while memory-resident PHP runners kept executing from files that had already been deleted, and an older persistence layer sat on accounts nobody had counted. Solution: A backup-first, dry-run-by-default containment operation that classified artifacts by structure rather than suspicion, quarantined original bytes before every mutation, traced the final request-time writer instead of deleting symptoms repeatedly, and refused to call the estate clean until scans stayed at zero after real page requests and after a delay. Closeout: 94 dynamically discovered WordPress roots scanned with zero identified artifacts, zero exact malware runners, 21 public sites returning HTTP 200 with no checked casino or loader indicators, database layer repaired from a validated backup, and an alert-only recurrence monitor running every ten minutes with proven off-box email delivery.",
+
+      fullDescription: `A production incident-response engagement on a shared hosting estate running many WordPress installations. Published as a public, client-safe technical case study \u2014 client names, credentials, addresses, access commands and backup locations are deliberately omitted.
+
+WHY THE FIRST SCOPE WAS WRONG
+Three assumptions caused an undercount. Known filenames were treated as the whole threat, so a site without those names was called clean when it could still carry a different loader, a hidden MU-plugin, injected database content or a memory-only runner. Disk state was treated as runtime state, so self-deleting runners stayed invisible to file inventory while still executing. And an HTTP 200 was treated as identity evidence, when some hosts return success-like responses for arbitrary missing paths. The correction was methodological: scope became evidence-driven across files, processes, PHP worker behaviour, database rows, HTTP probes with randomized negative controls, account boundaries and request-triggered regeneration together.
+
+THE PERSISTENCE MODEL
+The chain behaved as a system, not a file. Runtime runners executed randomized hidden files and survived their own source path being removed. WordPress auto-load locations \u2014 MU-plugins and drop-ins \u2014 re-executed on ordinary requests. Configuration directives loaded randomized PHP before application code, with a visible loader, a hidden twin and an obfuscated cache copy able to restore the active layer. Shared PHP-FPM workers retained executable state after on-disk cleanup, so known artifacts could reappear with no exact runner visible. A final resistant account held a fake generator-style MU-plugin, an obfuscated cache payload and multiple identical archive seeds. Alongside the file layer sat rogue administrators, a dangerous default registration role, malicious plugin activation, attacker options, casino posts and revisions, and poisoned page-builder data.
+
+NON-NEGOTIABLE RESPONSE RULES
+Back up before mutation \u2014 every apply pass wrote original bytes and a manifest into a fresh restricted quarantine checkpoint, and the database repair began only after a full compressed dump was created and validated as readable. Match structure, not broad suspicion \u2014 nothing was deleted merely for being recent, minified, encoded or unfamiliar. Never execute a suspected payload \u2014 the classifier read bytes, parsed archives without extraction, and syntax-checked cleaned PHP through a separate interpreter invocation. Make the smallest operational change \u2014 only workers owned by affected accounts were recycled, and shared PHP reloads or a full restart required separate explicit approval. Verify after real requests. And separate containment from restored trust.
+
+CONVERGENCE, NOT DELETION COUNT
+The first server-wide pass cut the file and process count dramatically but did not converge \u2014 a small group of accounts kept regenerating artifacts. Hidden loader twins and obfuscated cache loaders were found and added to the classifier. One account on a different PHP-FPM version survived a graceful reload and even a full restart with symptom-only cleanup, which proved an on-request source still existed. A temporary self-removing audit rule captured the actual writer during a controlled homepage request, static tracing found the source and its seeds, and the complete 12-artifact chain was quarantined in one atomic pass while the affected runtime was controlled. The account held at zero, and so did two later full-estate scans and delayed request testing.
+
+DATABASE AND CONTENT REPAIR \u2014 SEPARATE ACCEPTANCE
+Residual casino material survived in one database after the reinjector was gone. The repair restored page content and page-builder metadata from the latest clean revision, dropped the generated page cache, removed attacker-owned posts, revisions, metadata and term relationships with dependency-aware queries, removed rogue administrators and malicious options, restored the safe default role while keeping registration closed, validated serialized plugin state, then recounted indicators and inspected the rendered public page. More than two thousand attacker-controlled post and revision records were removed.
+
+MULTI-LAYER VERIFICATION
+No single check was treated as sufficient. Static: the expanded classifier scanned all 94 discovered roots and returned zero artifacts with no affected users. Runtime: the exact runner pattern returned zero and every required PHP, web, database, scheduler and automation service was active. Request-triggered: normal public requests were sent to the previously affected estate, including the site that had reproduced the final reinfection, and scans repeated afterwards. Delayed: clean results were re-confirmed after a wait rather than accepted straight after a service recycle. Public content: 21 known sites returned HTTP 200 with homepage HTML checked for casino strings, loader infrastructure, injector names and final-source indicators. Database: targeted queries confirmed zero checked casino posts, zero known malicious post metadata, zero malicious options, zero rogue administrators, and safe role and plugin configuration.
+
+RECURRENCE MONITORING \u2014 ALERT-ONLY BY DESIGN
+Every ten minutes the monitor takes a lock so scans cannot overlap, dynamically discovers current WordPress roots rather than trusting a fixed list, runs the expanded classifier in dry-run with a bounded timeout, treats an unparseable or failed scan or a zero root count as an alert condition, counts exact runner patterns, checks required services, confirms the automation engine is still bound to its intended local listener, sends on transition to alert with periodic reminders, and sends a recovery notice on return to clean. It does not auto-delete \u2014 automatic remediation during an alert could destroy evidence, act on a false positive, or cause an outage. The acceptance test ran a fresh 94-root scan with zero findings and zero runners, and the off-box mail provider accepted the health message with nothing left deferred in the local queue.
+
+HONEST RESIDUAL RISK
+Containment succeeded and was verified at several independent layers. It is not the same as restored trust. The environment showed long-lived persistence, cross-account activity, memory-resident execution, hidden loaders, shared-runtime replay and database abuse \u2014 so a host with that history cannot claim the assurance of a freshly provisioned system just because known indicators are gone. The recorded recommendation is a clean rebuild from a new image with fresh OS, PHP, database, WordPress core, plugin and theme code, scrubbed content and media only, no copied executable PHP, recreated automation services and credentials, full secret rotation, per-site validation on a temporary hostname before DNS cutover, an independently hosted external heartbeat, and retirement of the historical host after evidence retention. The on-box monitor closes the recurrence-detection gap, not the total-outage gap.`,
+
+      thumbnail: "",
+
+      technologies: [
+        "Linux Incident Response (Shared Production Host)",
+        "WordPress Security (MU-Plugins, Drop-ins, Core File Injection)",
+        "PHP-FPM Shared Worker State Handling (Account-Scoped Recycle \u2192 Approved Reload/Restart)",
+        "Process Forensics (Memory-Resident Runners, Open File Descriptor Recovery)",
+        "Structural Malware Classifier (Content Markers, Decoder Structure, Path Relationships, Archive Members)",
+        "Backup-First Quarantine (Dry-Run Default, Manifests, Atomic Replace + Syntax Check)",
+        "auto_prepend_file Loader Chain Analysis",
+        "MySQL / WordPress Database Repair (Dependency-Aware Deletes, Revision Restore, Serialized State Validation)",
+        "HTTP Presence Probing with Randomized Negative Controls",
+        "Cron-Scheduled Alert-Only Recurrence Monitoring (Locked, Bounded, Off-Box Email)",
+        "Python + Shell Tooling (Classifier, Scrubber, Verification, Monitor)",
+      ],
+
+      achievements: [
+        "94 dynamically discovered WordPress roots scanned \u2014 zero artifacts identified by the expanded structural classifier, with no affected users",
+        "Zero exact malware runner processes observed after containment, confirmed again after real requests and after a delay",
+        "21 known public sites returned HTTP 200 with no checked casino, loader, injector or source-chain indicator in homepage HTML",
+        "Traced the final request-time writer with a temporary self-removing audit rule instead of repeating symptom deletion, then removed the complete 12-artifact source chain in one atomic pass",
+        "Corrected a materially wrong initial scope \u2014 process-level observation proved the compromise crossed hosting-account boundaries, which filename scanning had missed",
+        "Every mutation was recoverable: original bytes plus a manifest quarantined before removal, and a validated compressed database dump before the content repair",
+        "Database layer repaired separately \u2014 more than two thousand attacker-controlled post and revision records removed, rogue administrators and malicious options cleared, safe default role restored with registration kept closed",
+        "Alert-only recurrence monitor installed on a ten-minute schedule, clean-baselined against a fresh 94-root scan, with off-box email delivery proven rather than assumed",
+        "Reported the residual-risk boundary explicitly \u2014 containment verified, trust restoration deliberately not claimed, with a documented clean-rebuild path",
+      ],
+
+      metrics: {
+        scope: "94 Dynamically Discovered WordPress Roots \u2014 Scope Derived from Evidence, Not a Hand-Maintained List",
+        artifacts: "0 Identified Artifacts \u00b7 0 Exact Malware Runners at Closeout",
+        publicSites: "21 Known Sites Returning HTTP 200 with No Checked Malware or Casino Indicators",
+        database: "2,000+ Attacker Posts & Revisions Removed \u00b7 0 Rogue Admins \u00b7 0 Malicious Options Remaining",
+        sourceChain: "Final 12-Artifact Source Chain Removed Atomically After Request-Time Writer Tracing",
+        safety: "Dry-Run by Default \u00b7 Backup Before Every Mutation \u00b7 Suspected Payloads Never Executed",
+        monitoring: "Alert-Only Recurrence Monitor Every 10 Minutes \u00b7 Off-Box Email Delivery Proven",
+        honesty: "Containment Verified \u2014 Trust Restoration Not Claimed \u00b7 Clean Rebuild Recommended",
+      },
+
+      beforeAfter: [
+        { label: "Scope", before: "Counted from known filenames on a handful of reported sites", after: "94 roots discovered dynamically, with process, database and HTTP evidence agreeing" },
+        { label: "Detection", before: "Filename scanning \u2014 clean result on sites that were actually infected", after: "Structural classification across files, processes, worker state, database rows and request behaviour" },
+        { label: "Cleanup", before: "Delete the visible files, watch them return within seconds", after: "Source chain traced to the request-time writer and removed atomically \u2014 estate held at zero" },
+        { label: "Proof", before: "A zero-result scan taken immediately after cleanup", after: "Zero confirmed again after real page requests and after a deliberate delay" },
+        { label: "Database", before: "Casino posts, rogue admins and open registration surviving a clean file scan", after: "Repaired from a clean revision after a validated backup \u2014 indicators recounted to zero" },
+        { label: "Recurrence", before: "No detection \u2014 reinfection would surface only when a client noticed", after: "Locked, bounded, alert-only monitor every 10 minutes with proven off-box delivery" },
+        { label: "Reporting", before: "\u201cIt\u2019s clean now\u201d", after: "Dated evidence per layer, plus an explicit residual-risk boundary and rebuild plan" },
+      ],
+
+      challenges: [
+        {
+          problem: "Deleted files kept coming back within seconds, and a site could return HTTP 200 while malicious code was still executing.",
+          solution: "Stopped treating regeneration as a reason to delete more broadly and started treating it as evidence of an unresolved source \u2014 a temporary self-removing audit rule captured the actual writer during a controlled homepage request.",
+          outcome: "The real source and its seeds were identified and removed in one atomic pass instead of another round of symptom deletion.",
+        },
+        {
+          problem: "Filename-based scanning proved infection but could never prove absence, so the first reported scope was materially too small.",
+          solution: "Replaced known-name matching with structural classification \u2014 confirmed markers, decoder structure, path relationships and archive contents \u2014 and paired it with process inspection across account boundaries.",
+          outcome: "The compromise was shown to be server-wide rather than limited to the originally reported sites.",
+        },
+        {
+          problem: "Malware launched PHP processes and then removed the file, so file inventory reported nothing while the runner stayed alive.",
+          solution: "Added process-level visibility and recovered a live runner through its open file descriptor for static analysis, without ever executing it.",
+          outcome: "The persistence chain could be modelled from the actual payload rather than guessed from what remained on disk.",
+        },
+        {
+          problem: "A graceful PHP-FPM reload preserved enough shared runtime state that reinfection continued even after the files were gone.",
+          solution: "Inspected service behaviour instead of assuming it, recycled only workers owned by affected accounts first, and escalated to a full restart only after the wider interruption risk was explicitly approved.",
+          outcome: "Shared runtime replay was eliminated without converting a security incident into a broad outage.",
+        },
+        {
+          problem: "Aggressive cleanup on a live shared host risked destroying evidence or breaking unrelated sites.",
+          solution: "Made dry-run the default for every scanner and scrubber, quarantined original bytes with a manifest before any mutation, syntax-checked rewritten PHP before atomic replacement, and reclassified any file whose bytes changed between planning and apply.",
+          outcome: "Every apply pass stayed recoverable and auditable, and no unrelated site was taken down.",
+        },
+        {
+          problem: "A clean file and process state still left casino content rendering publicly on one site.",
+          solution: "Treated the database as its own acceptance layer \u2014 full validated backup, restore from the latest clean revision including page-builder metadata, dependency-aware deletion of attacker records, then a recount and a rendered-page inspection.",
+          outcome: "Public content came back clean and the database indicators recounted to zero.",
+        },
+        {
+          problem: "A comprehensive zero-result scan is easy to over-sell as \u201cthe server is safe now\u201d.",
+          solution: "Reported containment and trust restoration as separate things \u2014 dated evidence per layer, an explicit statement of what remains uncertain after long-lived cross-account compromise, and a concrete clean-rebuild path.",
+          outcome: "The client got neither alarmism nor false assurance, and the rebuild recommendation stands on record.",
+        },
+      ],
+
+      featured: true,
+      isWordpress: true,
+    },
+
+    {
       id: "secure-hybrid-ai-hub",
       title: "Secure Hybrid AI Development Hub — Fail-Closed Local AI Broker",
       category: ["ai-ml", "fullstack", "compliance"],
@@ -2291,6 +2416,25 @@ VitalProbe does not certify a target, grant regulatory approval, replace clinica
       ],
     },
     {
+      category: "Security & Incident Response",
+      icon: "ShieldAlert",
+      color: "primary",
+      skills: [
+        { name: "Linux / WordPress Malware Incident Response (Containment \u2192 Verification \u2192 Monitoring)", tier: "expert" },
+        { name: "Self-Healing Persistence Chain Analysis (MU-Plugins, Drop-ins, auto_prepend_file Loaders, Cache Twins)", tier: "expert" },
+        { name: "Process-Level Forensics (Memory-Resident Runners, Open File Descriptor Recovery of Deleted Payloads)", tier: "expert" },
+        { name: "Structural Malware Classification (Markers, Decoder Structure, Path Relationships, Archive Members)", tier: "expert" },
+        { name: "Backup-First Quarantine (Dry-Run Default, Manifests, Atomic Replace + Syntax Check, Reclassify on Drift)", tier: "expert" },
+        { name: "Convergence Verification (Request-Triggered + Delayed Rescans, Not Deletion Counts)", tier: "expert" },
+        { name: "PHP-FPM Shared Worker State Handling (Account-Scoped Recycle Before Approved Shared Reload/Restart)", tier: "proficient" },
+        { name: "WordPress Database Compromise Repair (Rogue Admins, Malicious Options, Attacker Posts, Page-Builder Metadata)", tier: "expert" },
+        { name: "HTTP Presence Probing with Randomized Negative Controls", tier: "proficient" },
+        { name: "Alert-Only Recurrence Monitoring with Proven Off-Box Transport (No Auto-Remediation)", tier: "expert" },
+        { name: "Change Control on Shared Production Hosts (Explicit Approval Gates per Mutation Class)", tier: "proficient" },
+        { name: "Residual-Risk Reporting + Clean-Rebuild Planning (Containment \u2260 Restored Trust)", tier: "expert" },
+      ],
+    },
+    {
       category: "Healthcare & Compliance",
       icon: "Heart",
       color: "success",
@@ -2507,6 +2651,7 @@ export const projectCategories = [
   { id: "healthcare", label: "Healthcare" },
   { id: "fullstack", label: "Full Stack" },
   { id: "compliance", label: "Compliance" },
+  { id: "security", label: "Security" },
 ];
 
 /* ========================================

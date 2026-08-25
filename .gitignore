@@ -27,9 +27,11 @@ dist-ssr
 # Claude Code
 CLAUDE.md
 .claude/
+.mcp.json
 
 # Codex (mirrors CLAUDE.md — contains private Career-Ops content)
 AGENTS.md
+.codex/
 
 # CV & Career-Ops (personal — never commit)
 CV/
@@ -42,3 +44,6 @@ CREDENTIALS.md
 PROJECT-DOSSIER.md
 DEFECT-LOG.md
 CLAUDE.local.md
+
+# Local scratch (browser profiles, generated PDFs)
+tmp/
